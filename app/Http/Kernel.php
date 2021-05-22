@@ -2,7 +2,6 @@
 
 namespace App\Http;
 
-use App\Http\Middleware\DebugMiddleware;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\ForceJsonResponse;
 use App\Http\Middleware\IsAuthenticated;
@@ -18,7 +17,6 @@ use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class Kernel extends HttpKernel {
@@ -57,15 +55,4 @@ class Kernel extends HttpKernel {
 		'bindings' => SubstituteBindings::class,
 		'throttle' => ThrottleRequests::class,
 	];
-
-	/** @inheritdoc */
-	public function bootstrap() {
-		parent::bootstrap();
-
-		// add debug middleware on dev
-		if ( config('app.debug') ) {
-			DB::connection()->enableQueryLog();
-			$this->prependMiddlewareToGroup('api', DebugMiddleware::class);
-		}
-	}
 }

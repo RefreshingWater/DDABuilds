@@ -85,6 +85,7 @@
 		</div>
 
 		<notifications position="top center" />
+		<debug-bar />
 	</div>
 </template>
 
@@ -95,7 +96,16 @@ import {supportedLanguages} from './i18n';
 
 export default {
 	name: 'App',
-	components: { LoadingIndicator },
+	components: {
+		LoadingIndicator,
+		DebugBar: () => {
+			if ( process.env.NODE_ENV !== 'production' ) {
+				return import('../../vendor/derpierre65/laravel-debug-bar/resources/js/DebugBar.vue');
+			}
+
+			return {};
+		},
+	},
 	data() {
 		return {
 			darkMode: false,

@@ -3,10 +3,10 @@ import {NavbarPlugin, TooltipPlugin} from 'bootstrap-vue';
 import Vue from 'vue';
 import InfiniteLoading from 'vue-infinite-loading';
 import Notifications from 'vue-notification';
+import {addXmlHttpRequest} from '../../vendor/derpierre65/laravel-debug-bar/resources/js/LaravelDebugBar';
 import App from './App.vue';
 import acceptanceTest from './directives/acceptanceTest';
-import {initI18n} from './i18n';
-import i18n from './i18n';
+import i18n, {initI18n} from './i18n';
 import router from './router';
 import store from './store';
 
@@ -19,20 +19,26 @@ axios.defaults.baseURL = '/api/';
 axios.defaults.headers.common['Accept'] = 'application/json';
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-axios.interceptors.response.use((response) => {
-	if (response.data._debug) {
-		console.debug(response.request.responseURL, response.data._debug);
-		delete response.data._debug;
-	}
+if (process.env.NODE_ENV !== 'production') {
+	axios.interceptors.request.use((request) => {
+		request.meta = request.meta || {};
+		request.meta.requestStart = Date.now();
 
-	return response;
-}, (error) => {
-	if (error.response && error.response.data) {
-		return Promise.reject(error.response.data);
-	}
+		return request;
+	});
 
-	return Promise.reject(error.message);
-});
+	axios.interceptors.response.use((response) => {
+		addXmlHttpRequest({
+			status: response.status,
+			method: response.config.method.toUpperCase(),
+			url: response.request.responseURL,
+			headers: response.headers,
+			time: Date.now() - response.config.meta.requestStart,
+		});
+
+		return response;
+	});
+}
 
 Vue.use(NavbarPlugin);
 Vue.use(TooltipPlugin);

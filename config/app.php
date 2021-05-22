@@ -1,6 +1,7 @@
 <?php
 
 use App\Providers\SteamAuthServiceProvider;
+use LaravelDebugBar\LaravelDebugBarServiceProvider;
 
 return [
 
@@ -167,6 +168,7 @@ return [
         /*
          * Package Service Providers...
          */
+        LaravelDebugBarServiceProvider::class,
 
         /*
          * Application Service Providers...
