@@ -11,33 +11,32 @@ use App\Models\Like\ILikeableModel;
 use App\Models\Traits\HasSteamUser;
 use App\Models\Traits\TLikeable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property-read int        $ID
- * @property-read string     $date
- * @property-read string     $author
- * @property-read string     $title
- * @property-read string     $expPerRun
- * @property-read string     $timePerRun
- * @property-read string     $description
- * @property-read int        $views
- * @property-read int        $gameModeID
- * @property-read int        $difficultyID
- * @property-read int        $mapID
- * @property-read int        $comments
- * @property-read int        $isDeleted
- * @property-read int        $buildStatus
- * @property-read int        $afkAble
- * @property-read int        $hardcore
- * @property-read int        $likes
- * @property-read string        $steamID
+ * @property-read int $ID
+ * @property-read string $date
+ * @property-read string $author
+ * @property-read string $title
+ * @property-read string $expPerRun
+ * @property-read string $timePerRun
+ * @property-read string $description
+ * @property-read int $views
+ * @property-read int $gameModeID
+ * @property-read int $difficultyID
+ * @property-read int $mapID
+ * @property-read int $comments
+ * @property-read int $isDeleted
+ * @property-read int $buildStatus
+ * @property-read int $afkAble
+ * @property-read int $hardcore
+ * @property-read int $likes
+ * @property-read string $steamID
  *
- * @property-read Like       $likeValue
- * @property-read GameMode   $gameMode
+ * @property-read Like $likeValue
+ * @property-read GameMode $gameMode
  * @property-read Difficulty $difficulty
- * @property-read Map        $map
+ * @property-read Map $map
  * @property-read BuildWatch $watchStatus
  */
 class Build extends AbstractModel implements ILikeableModel {
@@ -175,24 +174,21 @@ class Build extends AbstractModel implements ILikeableModel {
 		}
 
 		if ( $searchParameters['map'] ) {
-			/** @var Collection $maps */
-			$maps = Map::whereIn('name', explode(',', $searchParameters['map']))->get();
+			$maps = Map::query()->whereIn('name', explode(',', $searchParameters['map']))->get();
 			if ( count($maps) ) {
-				$query->whereIn('mapID', array_column($maps->toArray(), 'ID'));
+				$query->whereIn('mapID', $maps->pluck('ID'));
 			}
 		}
 		if ( $searchParameters['gameMode'] ) {
-			/** @var GameMode $gameMode */
-			$gameMode = GameMode::where('name', $searchParameters['gameMode'])->first();
-			if ( $gameMode !== null ) {
-				$where[] = ['gameModeID', '=', $gameMode->ID];
+			$gameModes = GameMode::query()->whereIn('name', explode(',', $searchParameters['gameMode']))->get();
+			if ( count($gameModes) ) {
+				$query->whereIn('gameModeID', $gameModes->pluck('ID'));
 			}
 		}
 		if ( $searchParameters['difficulty'] ) {
-			/** @var Difficulty $difficulty */
-			$difficulty = Difficulty::where('name', $searchParameters['difficulty'])->first();
-			if ( $difficulty !== null ) {
-				$where[] = ['difficultyID', '=', $difficulty->ID];
+			$difficulties = Difficulty::query()->whereIn('name', explode(',', $searchParameters['difficulty']))->get();
+			if ( $difficulties !== null ) {
+				$query->whereIn('difficultyID', $difficulties->pluck('ID'));
 			}
 		}
 
