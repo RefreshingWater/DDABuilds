@@ -1,4 +1,4 @@
-import VueI18Next from '@panter/vue-i18next';
+import VueI18Next from '@derpierre65/vue-i18next';
 import axios from 'axios';
 import i18next from 'i18next';
 import i18nextHttpBackend from 'i18next-http-backend';

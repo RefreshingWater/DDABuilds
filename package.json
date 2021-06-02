@@ -6,8 +6,7 @@
         "dev-php": "php artisan serve --host 0.0.0.0",
         "build": "mix --production",
         "eslint": "eslint -c .eslintrc.json --ext .js,.vue resources/src/",
-        "eslint-fix": "eslint -c .eslintrc.json --ext .js,.vue resources/src/ --fix",
-        "123postinstall": "cd node_modules/@panter/vue-i18next/ && npm install"
+        "eslint-fix": "eslint -c .eslintrc.json --ext .js,.vue resources/src/ --fix"
     },
     "author": "Chakratos",
     "contributors": [
@@ -16,7 +15,7 @@
     "devDependencies": {
         "@ckeditor/ckeditor5-build-classic": "^24.0.0",
         "@ckeditor/ckeditor5-vue2": "^1.0.5",
-        "@panter/vue-i18next": "git+https://github.com/derpierre65/vue-i18next.git",
+        "@derpierre65/vue-i18next": "^1.0.0-beta.1",
         "axios": "^0.21.1",
         "bootstrap": "^4.6.0",
         "bootstrap-vue": "^2.21.2",
