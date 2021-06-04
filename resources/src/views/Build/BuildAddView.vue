@@ -453,12 +453,13 @@ export default {
 		},
 		waveTowersFiltered() {
 			this.$nextTick(() => {
-				let offset = $(this.$refs.mapContainer).offset();
 				for (let key in this.$refs.placedTower) {
 					let el = this.$refs.placedTower[key];
 					$(el).draggable({
 						containment: '#mapContainer',
 						stop: (event, ui) => {
+							let offset = $(this.$refs.mapContainer).offset();
+
 							this.placedTowers[key].x = ui.offset.left - offset.left;
 							this.placedTowers[key].y = ui.offset.top - offset.top;
 						},
