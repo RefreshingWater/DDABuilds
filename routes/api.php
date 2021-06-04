@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BuildCommentController;
 use App\Http\Controllers\BuildController;
+use App\Http\Controllers\ChangelogController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\IssueCommentController;
 use App\Http\Controllers\IssueController;
@@ -39,8 +40,8 @@ Route::group(['middleware' => ['auth:user']], function () {
 	}
 });
 
+Route::get('/changelogs', [ChangelogController::class, 'index']);
 Route::get('/maps/editor/{map}', [MapController::class, 'editor']);
-
 Route::apiResources([
 	'builds' => BuildController::class,
 	'builds.comments' => BuildCommentController::class,

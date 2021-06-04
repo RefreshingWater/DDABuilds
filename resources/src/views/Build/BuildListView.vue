@@ -10,7 +10,7 @@
 				</i18next>
 				<form @submit.prevent="filterSearch">
 					<div class="row">
-						<div class="col-md-2 col-sm-6">
+						<div class="col-md-4 col-sm-6">
 							<div class="form-group">
 								<label for="titleFilter">
 									{{$t('build.title')}}
@@ -18,7 +18,7 @@
 								<input id="titleFilter" v-model="filter.title" :placeholder="$t('build.title')" class="form-control" type="text">
 							</div>
 						</div>
-						<div class="col-md-2 col-sm-6">
+						<div class="col-md-4 col-sm-6">
 							<div class="form-group">
 								<label for="authorFilter">
 									{{$t('build.author')}}
@@ -26,34 +26,22 @@
 								<input id="authorFilter" v-model="filter.author" :placeholder="$t('build.author')" class="form-control" type="text">
 							</div>
 						</div>
-						<div class="col-md-2 col-sm-6">
+					</div>
+					<div class="row">
+						<div class="col-md-4 col-sm-6">
 							<div class="form-group">
 								<label for="difficultyFilter">
 									{{$t('build.difficulty')}}
 								</label>
-								<select id="difficultyFilter" v-model="filter.difficulty" class="form-control">
-									<option value="">
-										{{$t('words.any')}}
-									</option>
-									<option v-for="(value, key) in $t('difficulty')" :key="key" :value="key">
-										{{value}}
-									</option>
-								</select>
+								<v-select id="difficultyFilter" v-model="filter.difficulty" :options="difficultySelect" :reduce="option => option.value" multiple />
 							</div>
 						</div>
-						<div class="col-md-2 col-sm-6">
+						<div class="col-md-4 col-sm-6">
 							<div class="form-group">
 								<label for="gameModeFilter">
 									{{$t('build.gameMode')}}
 								</label>
-								<select id="gameModeFilter" v-model="filter.gameMode" class="form-control">
-									<option value="">
-										{{$t('words.any')}}
-									</option>
-									<option v-for="(value, key) in $t('gameMode')" :key="key" :value="key">
-										{{value}}
-									</option>
-								</select>
+								<v-select id="gameModeFilter" v-model="filter.gameMode" :options="gameModeSelect" :reduce="option => option.value" multiple />
 							</div>
 						</div>
 						<div class="col-md-4 col-sm-6">
@@ -241,13 +229,29 @@ export default {
 		};
 	},
 	computed: {
-		mapSelect() {
-			let mapList = [];
-			for (let name of Object.keys(this.$t('map'))) {
-				mapList.push({ label: this.$t('map.' + name), value: name });
+		gameModeSelect() {
+			let select = [];
+			for (let name of Object.keys(this.$t('gameMode'))) {
+				select.push({ label: this.$t('gameMode.' + name), value: name });
 			}
 
-			return mapList;
+			return select;
+		},
+		difficultySelect() {
+			let select = [];
+			for (let name of Object.keys(this.$t('difficulty'))) {
+				select.push({ label: this.$t('difficulty.' + name), value: name });
+			}
+
+			return select;
+		},
+		mapSelect() {
+			let select = [];
+			for (let name of Object.keys(this.$t('map'))) {
+				select.push({ label: this.$t('map.' + name), value: name });
+			}
+
+			return select;
 		},
 	},
 	watch: {
@@ -272,14 +276,14 @@ export default {
 		buildListSearch,
 		formatDate,
 		onLanguageUpdate() {
-			this.updateFilterMap();
+			this.updateMultipleFilters();
 		},
 		getDefaultFilter() {
 			return {
 				title: '',
 				author: '',
-				difficulty: '',
-				gameMode: '',
+				difficulty: [],
+				gameMode: [],
 				map: [],
 			};
 		},
@@ -295,17 +299,20 @@ export default {
 				ASC: !isDesc,
 			};
 		},
-		updateFilterMap() {
-			let maps = [];
-			for (let map of this.filter.map) {
-				if (typeof map === 'string') {
-					maps.push({ label: this.$t('map.' + map), value: map });
+		updateMultipleFilters() {
+			for (let key of ['gameMode', 'map', 'difficulty']) {
+				let list = [];
+				for (let value of this.filter[key]) {
+					if (typeof value === 'string') {
+						list.push({ label: this.$t(key + '.' + value), value: value });
+					}
+					else {
+						list.push({ label: this.$t(key + '.' + value.value), value: value.value });
+					}
 				}
-				else {
-					maps.push({ label: this.$t('map.' + map.value), value: map.value });
-				}
+
+				this.filter[key] = list;
 			}
-			this.filter.map = maps;
 		},
 		updateFilter() {
 			this.filter = this.getDefaultFilter();
@@ -328,7 +335,7 @@ export default {
 				}
 			}
 
-			this.updateFilterMap();
+			this.updateMultipleFilters();
 
 			this.isFilterActive = filterStatus;
 		},

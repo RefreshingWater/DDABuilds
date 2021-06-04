@@ -25,6 +25,20 @@ function buildListSearch(options = {}) {
 
 	for (let key of ['map', 'gameMode', 'difficulty']) {
 		if (options[key]) {
+			if (Array.isArray(options[key])) {
+				let values = [];
+				for (let value of options[key]) {
+					if (typeof value === 'string') {
+						values.push(value);
+					}
+					else {
+						values.push(value.value);
+					}
+				}
+
+				options[key] = values;
+			}
+
 			options[key] = Array.isArray(options[key]) ? ucfirst(options[key]).join(',') : ucfirst(options[key]);
 		}
 	}
